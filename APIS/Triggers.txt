@@ -1,0 +1,38 @@
+-- Crear una función para el trigger
+CREATE OR REPLACE FUNCTION crear_foto_insert() 
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO Fotos (Id_habitacion)
+  VALUES (NEW.Id_habitacion);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Crear el trigger
+CREATE TRIGGER crear_foto_despues
+AFTER INSERT ON Habitacion
+FOR EACH ROW
+EXECUTE FUNCTION crear_foto_insert();
+
+
+CREATE OR REPLACE FUNCTION generar_reporte_reserva() 
+RETURNS TRIGGER AS $$
+BEGIN
+ 
+  INSERT INTO reportereserva (nombre, id_reservacion, detalles)
+  VALUES (NEW.nombre, NEW.id_reservacion, NEW.detalles);
+
+  
+  INSERT INTO cliente (nombre, apellido, correo_electronico, telefono)
+  VALUES (NEW.nombre, NEW.apellido, NEW.correo_electronico, NEW.telefono)
+  ON CONFLICT (correo_electronico) DO NOTHING;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER generar_reporte_despues_insert
+AFTER INSERT ON reservaciones
+FOR EACH ROW
+EXECUTE FUNCTION generar_reporte_reserva();
