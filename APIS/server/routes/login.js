@@ -3,6 +3,9 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 const router = Router();
 const prisma = new PrismaClient();
+import jwt from "jsonwebtoken";
+
+const secretKey = "D5g$!Wt#2v@H7j*Kf%Lp&3s";
 
 //route to insert new administrators
 router.post("/insertAd", async (req, res) => {
@@ -35,12 +38,19 @@ router.post("/login", async (req, res) => {
     const administrador = await prisma.administrador.findMany({
       where: { correo: correo },
     });
+
     if (administrador.length === 0) {
       return res.status(401).json({ error: "Credenciales incorrectas" });
     }
+
     const match = await bcrypt.compare(contrase_a, administrador[0].contrase_a);
     if (match) {
-      return res.json({ mensaje: "Inicio de sesión exitoso" });
+      const token = jwt.sign({ correo }, secretKey, { expiresIn: "1h" });
+
+      return res.json({
+        mensaje: "Inicio de sesión exitoso",
+        token: token,
+      });
     } else {
       return res.status(401).json({ error: "Credenciales incorrectas" });
     }

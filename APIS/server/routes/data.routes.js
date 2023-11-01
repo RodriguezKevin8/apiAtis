@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -91,4 +90,34 @@ router.get("/detallesreservacion", async (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 });
-export default router;
+router.put("/disponibilidad/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const habitacion = await prisma.habitacion.update({
+      where: { id_habitacion: parseInt(id) },
+      data: {
+        disponibilidad: req.body.disponibilidad,
+      },
+    });
+    res.json(habitacion);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+router.get("/fechasEntrada", async (req, res) => {
+  try {
+    const fechasEntrada = await prisma.reservaciones.findMany({
+      select: {
+        fecha_entrada: true,
+        fecha_salida: true,
+      },
+    });
+    res.status(200).json(fechasEntrada);
+  } catch (error) {
+    console.error("Error al obtener las fechas de entrada:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+export default router;  
