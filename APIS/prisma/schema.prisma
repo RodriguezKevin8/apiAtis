@@ -61,6 +61,7 @@ model reservaciones {
   fecha_salida       DateTime?        @db.Date
   estado             String?          @db.VarChar(50)
   comprobante        String?          @db.VarChar(50)
+  total              Float?
   reportereserva     reportereserva[]
   habitacion         habitacion?      @relation(fields: [id_habitacion], references: [id_habitacion], onDelete: NoAction, onUpdate: NoAction)
 }
