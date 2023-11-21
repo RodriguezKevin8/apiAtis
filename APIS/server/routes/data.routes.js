@@ -158,6 +158,7 @@ router.get("/fechasEntrada/:id", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 router.get("/detallescliente/:comprobante", async (req, res) => {
   const { comprobante } = req.params;
   try {
@@ -199,4 +200,6 @@ router.delete("/eliminarReservacion/:id", async (req, res) => {
   }
 });
 
+=======
+>>>>>>> 4505376a84d77d734d506c9d736fd4885fa2bb84
 export default router;
