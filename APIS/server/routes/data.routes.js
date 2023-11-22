@@ -158,7 +158,6 @@ router.get("/fechasEntrada/:id", async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 router.get("/detallescliente/:comprobante", async (req, res) => {
   const { comprobante } = req.params;
   try {
@@ -200,6 +199,14 @@ router.delete("/eliminarReservacion/:id", async (req, res) => {
   }
 });
 
-=======
->>>>>>> 4505376a84d77d734d506c9d736fd4885fa2bb84
+router.get("/reportereservacion", async (req, res) => {
+  try {
+    const detallesReservacion = await prisma.reservaciones.findMany();
+    res.status(200).json(detallesReservacion);
+  } catch (error) {
+    console.error("Error al obtener los detalles de la reserva:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
 export default router;

@@ -15,4 +15,14 @@ router.post("/comment", async (req, res) => {
   }
 });
 
+router.get("/commentData", async (req, res) => {
+  try {
+    const newhab = await prisma.reportecomentario.findMany({});
+    res.json(newhab);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export default router;
