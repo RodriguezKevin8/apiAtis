@@ -158,4 +158,55 @@ router.get("/fechasEntrada/:id", async (req, res) => {
   }
 });
 
+router.get("/detallescliente/:comprobante", async (req, res) => {
+  const { comprobante } = req.params;
+  try {
+    const data = await prisma.reservaciones.findMany({
+      where: {
+        comprobante: comprobante,
+      },
+    });
+
+    if (data.length === 0) {
+      return res.status(404).json({
+        error: "No existe una reservación con este número de comprobante",
+      });
+    }
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error("Error al obtener datos de la reservación:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+router.delete("/eliminarReservacion/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const reservacionEliminada = await prisma.reservaciones.delete({
+      where: {
+        id_reservacion: parseInt(id),
+      },
+    });
+
+    res.status(200).json({
+      message: "Reservación eliminada correctamente",
+      data: reservacionEliminada,
+    });
+  } catch (error) {
+    console.error("Error al eliminar la reservación:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+router.get("/reportereservacion", async (req, res) => {
+  try {
+    const detallesReservacion = await prisma.reservaciones.findMany();
+    res.status(200).json(detallesReservacion);
+  } catch (error) {
+    console.error("Error al obtener los detalles de la reserva:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
 export default router;
